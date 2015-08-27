@@ -60,7 +60,7 @@
     (term/scroll-up (:screen console) 1 (- height 3))))
 
 (defn update-console-chrome
-  "Updates the 'chrome' or non-scrolling content for the console."
+  "Updates the 'chrome' or non-scrolling content of the console."
   [console]
   (let [width (first @(:size console))]
     (term/write-reverse (:screen console) 0 0 (pad-line width "Mud Client v0.0.0"))
@@ -83,11 +83,15 @@
     (term/refresh (:screen console))))
 
 (defn break-writeln-console
+  "Breaks the provided line of text into lines that match the width of
+  the console and then write then all to the scrollable content area of
+  the console."
   [console line]
   (doseq [line-this (break-lines (first @(:size console)) 0 line)]
     (writeln-console console line-this)))
 
 (defn handle-resize-console
+  "Handles updating the console display upon resize events."
   [console size]
   (reset! (:size console) size)
   (update-console-chrome console))
@@ -107,33 +111,30 @@
     (update-console-chrome console-this)
     console-this))
 
-(defn dispose-console
-  "Releases a console and reclaims any associated resources."
-  [console]
-  (dosync (ref-set (:handle-input console) false))
-  (async/close! (:input-channel console))
-  (term/dispose (:screen console)))
-
-;; input management
+(defn post-to-server
+  "Posts a textual message to the server."
+  [console text]
+  (let [server-socket (:server-socket console)]
+    (stream/put! server-socket text)))
 
 (def RETURN-KEY (term/vim-keystroke "<Return>"))
 (def BACKSPACE-KEY (term/vim-keystroke "<BS>"))
 
 (defn handle-pending-input
+  "Reads new key strokes off the input channel and handles them on
+  behalf of the application."
   [console]
   (async/go (loop []
               (when-let [keystroke (async/<! (:input-channel console))]
                 (cond
                   (= keystroke RETURN-KEY)
                   (do
-                    (writeln-console console (apply str @(:input-buffer console)))
+                    (term/refresh (:screen console))
+                    (post-to-server console (apply str @(:input-buffer console)))
                     (reset! (:input-buffer console) [])
                     (term/write (:screen console) 2 (- (second @(:size console)) 1)
-                           (pad-line (first @(:size console)) " "))
-                    (term/move-cursor (:screen console)
-                                 (+ 2 (count @(:input-buffer console)))
-                                 (- (second @(:size console)) 1))
-                    (term/refresh (:screen console))
+                                (pad-line (first @(:size console)) " "))
+                    (term/move-cursor (:screen console) 2 (- (second @(:size console)) 1))
                     (recur))
 
                   (= keystroke BACKSPACE-KEY)
@@ -159,9 +160,12 @@
                     (recur)))))))
 
 (defn create-interactive-console
+  "Creates a new console that can also handle keyboard input."
   []
   (let [console (create-console)
         handle-input-flag (ref true)
+        handle-server-flag (ref true)
+        server-socket @(http/websocket-client "ws://localhost:18080/echo")
         input-channel (async/chan 1024)
         input-agent (agent {:channel input-channel
                             :screen (:screen console)})
@@ -169,6 +173,7 @@
                            {:handle-input handle-input-flag
                             :input-channel input-channel
                             :input-agent input-agent
+                            :server-socket server-socket
                             :input-buffer (atom [])})]
 
     ;; start a thread to poll for input from the console
@@ -182,10 +187,22 @@
                           )
                       (Thread/sleep 100))))))
 
+    (stream/consume
+     (fn [message]
+       (break-writeln-console console message))
+     server-socket)
+
     ;; start a thread to handle pending input
     (handle-pending-input console-out)
     (term/refresh (:screen console-out))
     console-out))
+
+(defn dispose-console
+  "Releases a console and reclaims any associated resources."
+  [console]
+  (dosync (ref-set (:handle-input console) false))
+  (async/close! (:input-channel console))
+  (term/dispose (:screen console)))
 
 (defn main
   [& args]

@@ -19,8 +19,6 @@
    [com.googlecode.lanterna SGR]
    [com.googlecode.lanterna.input KeyStroke]))
 
-;; screen management
-
 (defn create
   "Instantiates a new terminal and returns a map with references to the
   console and related data structures."
@@ -106,8 +104,6 @@
   [screen column row]
   (.setCursorPosition screen (TerminalPosition. column row)))
 
-;; terminal management
-
 (defn add-resize-handler
   "Adds the provided function as a resize handler to the provided
   screen. When the screen's underlying terminal changes size, this
@@ -118,8 +114,6 @@
                       (proxy [SimpleTerminalResizeListener] [(TerminalSize. 80 24)]
                         (onResized [terminal new-size]
                           (resize-fn screen [(.getColumns new-size) (.getRows new-size)])))))
-
-;; keystroke management
 
 (defn vim-keystroke
   "Returns the KeyStroke that matches the given Vim description string."
