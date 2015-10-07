@@ -6,10 +6,12 @@
                  [slingshot "0.12.2"]
                  [dire "0.5.3"]
                  [ring "1.4.0-RC1"]
+                 [io.netty/netty-all "4.1.0.Beta6"]
                  [compojure "1.3.4"]
                  [manifold "0.1.0"]
-                 [aleph "0.4.0"]
-                 [com.googlecode.lanterna/lanterna "3.0.0-SNAPSHOT"]]
+                 [aleph "0.4.0"
+                  :exclusions [[io.netty/netty-all]]]
+                 [com.googlecode.lanterna/lanterna "3.0.0-beta1"]]
   :main cmiles74.client.mud
   :repositories [["nervestaple"
                   {:url "http://nexus.nervestaple.com/content/groups/public"}]]
