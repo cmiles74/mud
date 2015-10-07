@@ -16,8 +16,7 @@
    [com.googlecode.lanterna TerminalSize]
    [com.googlecode.lanterna.terminal SimpleTerminalResizeListener]
    [com.googlecode.lanterna.screen Screen]
-   [com.googlecode.lanterna SGR]
-   [com.googlecode.lanterna.input KeyStroke]))
+   [com.googlecode.lanterna SGR]))
 
 (defn create
   "Instantiates a new terminal and returns a map with references to the
@@ -114,8 +113,3 @@
                       (proxy [SimpleTerminalResizeListener] [(TerminalSize. 80 24)]
                         (onResized [terminal new-size]
                           (resize-fn screen [(.getColumns new-size) (.getRows new-size)])))))
-
-(defn vim-keystroke
-  "Returns the KeyStroke that matches the given Vim description string."
-  [vim-description]
-  (KeyStroke/fromString vim-description))
