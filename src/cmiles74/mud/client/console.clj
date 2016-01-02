@@ -1,4 +1,4 @@
-(ns cmiles74.client.console
+(ns cmiles74.mud.client.console
   (:require
    [taoensso.timbre :as timbre
     :refer (log  trace  debug  info  warn  error  fatal  report
@@ -13,7 +13,7 @@
    [manifold.stream :as stream]
    [manifold.deferred :as deferred]
    [clojure.core.async :as async]
-   [cmiles74.client.terminal :as term]))
+   [cmiles74.mud.client.terminal :as term]))
 
 ;; text management
 

@@ -2,7 +2,6 @@ lib
 build
 classes
 *.jar
-.cake
 pom.xml
 docs
 #*#
@@ -14,6 +13,5 @@ docs
 *.log.*
 .#*
 target
-.cutter
-phantomjs
 .nrepl-port
+data

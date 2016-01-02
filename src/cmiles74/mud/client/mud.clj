@@ -1,4 +1,4 @@
-(ns cmiles74.client.mud
+(ns cmiles74.mud.client.mud
   (:gen-class)
   (:require
    [taoensso.timbre :as timbre
@@ -14,8 +14,8 @@
    [manifold.stream :as stream]
    [manifold.deferred :as deferred]
    [clojure.core.async :as async]
-   [cmiles74.client.console :as console]
-   [cmiles74.client.keybinding :as keybinding]))
+   [cmiles74.mud.client.console :as console]
+   [cmiles74.mud.client.keybinding :as keybinding]))
 
 (defonce timbre-config
   (timbre/merge-config!

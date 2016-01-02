@@ -2,6 +2,8 @@
   :description "A Simple Multi User Dungeon"
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
+                 [org.clojure/tools.cli "0.3.3"]
+                 [clj-yaml "0.4.0"]
                  [com.taoensso/timbre "4.0.1"]
                  [slingshot "0.12.2"]
                  [dire "0.5.3"]
@@ -11,8 +13,9 @@
                  [manifold "0.1.0"]
                  [aleph "0.4.0"
                   :exclusions [[io.netty/netty-all]]]
-                 [com.googlecode.lanterna/lanterna "3.0.0-beta1"]]
-  :main cmiles74.client.mud
+                 [com.googlecode.lanterna/lanterna "3.0.0-beta1"]
+                 [yada "1.0.0-20150903.093751-9"]]
+  :main cmiles74.mud.client.mud
   :repositories [["nervestaple"
                   {:url "http://nexus.nervestaple.com/content/groups/public"}]]
 

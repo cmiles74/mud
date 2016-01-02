@@ -1,5 +1,4 @@
-(ns cmiles74.server.mud
-  (:gen-class)
+(ns cmiles74.mud.server.mud
   (:require
    [taoensso.timbre :as timbre
     :refer (log  trace  debug  info  warn  error  fatal  report
@@ -9,6 +8,8 @@
    [taoensso.timbre.profiling :as profiling
     :refer (pspy pspy* profile defnp p p*)]
    [slingshot.slingshot :only [throw+ try+]]
+   [clojure.tools.cli :refer [parse-opts]]
+   [clojure.string :as string]
    [dire.core :refer [with-handler!]]
    [aleph.http :as http]
    [manifold.stream :as stream]
@@ -51,12 +52,3 @@
   (if @server
     (do (info "Stopping the Mud server")
         (.close @server))))
-
-(defn main
-  [& args]
-  (println "Hello from the Mud server!")
-  (start-server))
-
-(defn -main
-  [& args]
-  (apply main args))

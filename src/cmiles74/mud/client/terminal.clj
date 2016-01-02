@@ -1,4 +1,4 @@
-(ns cmiles74.client.terminal
+(ns cmiles74.mud.client.terminal
   (:require
    [taoensso.timbre :as timbre
     :refer (log  trace  debug  info  warn  error  fatal  report

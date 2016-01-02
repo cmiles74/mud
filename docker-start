@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# allow X11 access
+xhost +local:docker
+
+# start containers
+docker start mud-rethinkdb
+docker start mud-emacs
+

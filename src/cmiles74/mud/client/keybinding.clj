@@ -1,5 +1,5 @@
-(ns cmiles74.client.keybinding
-  (:require [cmiles74.client.console :as console])
+(ns cmiles74.mud.client.keybinding
+  (:require [cmiles74.mud.client.console :as console])
   (:import [com.googlecode.lanterna.input KeyStroke]))
 
 (defn vim-keystroke
