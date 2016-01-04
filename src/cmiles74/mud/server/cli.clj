@@ -16,12 +16,13 @@
    [slingshot.slingshot :only [throw+ try+]]))
 
 (def DEFAULT-CONFIG
-  {:server {:host "localhost"
+  {:logging {:level "debug"}
+   :server {:host "localhost"
             :port 18080}
    :database {:host "mud-rethinkdb"
               :port 28015}})
 
-(def DEFAULT-CONFIG-FILE ".mud-server.conf")
+(def DEFAULT-CONFIG-FILE ".mud-server.yml.conf")
 
 (defn load-config-file [path-in]
   (try+
@@ -54,7 +55,10 @@
     (cond
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors)))
-  (server/start-server (load-config-file (:config options)))))
+    (let [configuration (load-config-file (:config options))]
+      (if (:level (:logging configuration))
+        (timbre/set-level! (keyword (:level (:logging configuration)))))
+      (server/start-server configuration))))
 
 (defn -main
   [& args]
