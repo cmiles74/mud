@@ -15,7 +15,7 @@
                   :exclusions [[io.netty/netty-all]]]
                  [com.googlecode.lanterna/lanterna "3.0.0-beta1"]
                  [yada "1.0.0-20150903.093751-9"]]
-  :main cmiles74.mud.client.mud
+  :main cmiles74.mud.server.cli
   :repositories [["nervestaple"
                   {:url "http://nexus.nervestaple.com/content/groups/public"}]]
 

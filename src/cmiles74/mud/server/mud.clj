@@ -42,10 +42,11 @@
       (route/not-found "No such page."))))
 
 (defn start-server
-  []
+  [configuration]
   (if (not @server)
-    (dosync (info "Starting the Mud server")
-            (ref-set server (http/start-server handler {:port 18080})))))
+    (let [server-port (:port (:server configuration))]
+      (dosync (info "Starting the Mud server, listening on port" server-port)
+              (ref-set server (http/start-server handler {:port server-port}))))))
 
 (defn stop-server
   []

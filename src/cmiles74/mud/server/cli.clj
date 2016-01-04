@@ -8,12 +8,12 @@
    [taoensso.timbre.appenders.core :as appenders]
    [taoensso.timbre.profiling :as profiling
     :refer (pspy pspy* profile defnp p p*)]
-   [slingshot.slingshot :only [throw+ try+]]
    [clojure.tools.cli :refer [parse-opts]]
    [clojure.string :as string]
-   [clojure.java.io :as io]
-   [clj-yaml.core :as yaml]
-   [cmiles74.mud.server.mud :as server]))
+   [cmiles74.mud.common.config :as config]
+   [cmiles74.mud.server.mud :as server])
+  (:use
+   [slingshot.slingshot :only [throw+ try+]]))
 
 (def DEFAULT-CONFIG
   {:server {:host "localhost"
@@ -23,25 +23,15 @@
 
 (def DEFAULT-CONFIG-FILE ".mud-server.conf")
 
-(def DEFAULT-CONFIG-FILE-SEARCH
-  [(str (System/getProperty "user.dir") "/" DEFAULT-CONFIG-FILE)
-   (str (System/getProperty "user.home") "/" DEFAULT-CONFIG-FILE)])
-
-(defn find-config-file []
-  (some #(if (.exists (io/as-file %)) %) DEFAULT-CONFIG-FILE-SEARCH))
-
-(defn read-config-file [path-in]
-  (yaml/parse-string (slurp path-in)))
-
 (defn load-config-file [path-in]
-  (cond
-    path-in (read-config-file path-in)
-    (find-config-file)(read-config-file (find-config-file))
-    :else DEFAULT-CONFIG))
+  (try+
+   (config/load-config-file DEFAULT-CONFIG DEFAULT-CONFIG-FILE path-in)
+   (catch Object exception
+     (do (debug (:throwable &throw-context))
+         DEFAULT-CONFIG))))
 
 (def cli-options
-  [["-c" "--config" "Path to the configuration file"
-    :default nil]
+  [["-c" "--config FILE" "Path to the configuration file" :default nil]
    ["-h" "--help"]])
 
 (defn usage [options-summary]
@@ -64,8 +54,7 @@
     (cond
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors)))
-    (info "Configuration:" (:config options))
-    (server/start-server)))
+  (server/start-server (load-config-file (:config options)))))
 
 (defn -main
   [& args]
