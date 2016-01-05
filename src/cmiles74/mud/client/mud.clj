@@ -1,5 +1,4 @@
 (ns cmiles74.mud.client.mud
-  (:gen-class)
   (:require
    [taoensso.timbre :as timbre
     :refer (log  trace  debug  info  warn  error  fatal  report
@@ -48,18 +47,13 @@
            :handler (post-to-server-fn server-socket)}}))
 
 (defn create-client
-  []
-  (let [server-socket @(http/websocket-client "ws://localhost:18080/echo")
+  [configuration]
+  (let [server-host (:host (:server configuration))
+        server-port (:port (:server configuration))
+        server-socket @(http/websocket-client
+                        (str "ws://" server-host ":" server-port "/echo"))
         keybindings (build-keybindings server-socket)
         console (console/create-interactive-console keybindings)]
     (handle-server-message server-socket console)
     {:console console
      :server-socket server-socket}))
-
-(defn main
-  [& args]
-  (create-client))
-
-(defn -main
-  [& args]
-  (apply main args))

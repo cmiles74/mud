@@ -1,4 +1,4 @@
-(ns cmiles74.mud.server.cli
+(ns cmiles74.mud.client.cli
   (:gen-class)
   (:require
    [taoensso.timbre :as timbre
@@ -12,18 +12,16 @@
    [clojure.string :as string]
    [cmiles74.mud.common.config :as config]
    [cmiles74.mud.common.cli :as cli]
-   [cmiles74.mud.server.mud :as server])
+   [cmiles74.mud.client.mud :as client])
   (:use
    [slingshot.slingshot :only [throw+ try+]]))
 
 (def DEFAULT-CONFIG
   {:logging {:level "debug"}
    :server {:host "localhost"
-            :port 18080}
-   :database {:host "mud-rethinkdb"
-              :port 28015}})
+            :port 18080}})
 
-(def DEFAULT-CONFIG-FILE ".mud-server-config.yml")
+(def DEFAULT-CONFIG-FILE ".mud-client-config.yml")
 
 (defn load-config-file [path-in]
   (try+
@@ -37,7 +35,7 @@
    ["-h" "--help"]])
 
 (defn usage [options-summary]
-  (->> ["Starts up the mud server."
+  (->> ["Starts up the mud client."
         ""
         options-summary]
        (string/join \newline)))
@@ -51,9 +49,8 @@
     (let [configuration (load-config-file (:config options))]
       (if (:level (:logging configuration))
         (timbre/set-level! (keyword (:level (:logging configuration)))))
-      (server/start-server configuration))))
+      (client/create-client configuration))))
 
 (defn -main
   [& args]
   (apply main args))
-
