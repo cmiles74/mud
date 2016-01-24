@@ -23,13 +23,32 @@
    {:appenders {:spit (appenders/spit-appender {:fname "mud-server.log"})}}))
 
 (def server (ref nil))
+(def clients (ref {}))
 
-(defn echo-handler
+(defn register-client [socket]
+  (dosync (let [client-name (count @clients)]
+            (alter clients assoc (count @clients) socket)
+            client-name)))
+
+(defn welcome [socket]
+  (let [client-name  (register-client socket)]
+    (stream/put! socket (str "Welcome to the Mud Server, Client #" client-name "!"))
+    client-name))
+
+(defn websocket-handler
   [request]
   (info "Handling incoming request...")
+  (info request)
   (->
    (deferred/let-flow [socket (http/websocket-connection request)]
-               (stream/connect socket socket))
+     (let [client-name (welcome socket)]
+       (stream/consume
+        (fn [message]
+          ;; (info message)
+          (doall (doseq [[client-name-this client-socket] @clients]
+                   (info "Posting" client-name-this "-" message)
+                   (stream/put! client-socket (str client-name ": " message)))))
+        socket)))
    (deferred/catch
        (fn [_] {:status 400
                :headers {"content-type" "application/text"}
@@ -38,7 +57,7 @@
 (def handler
   (params/wrap-params
     (compojure/routes
-      (GET "/echo" [] echo-handler)
+      (GET "/connect" [] websocket-handler)
       (route/not-found "No such page."))))
 
 (defn start-server
@@ -51,5 +70,6 @@
 (defn stop-server
   []
   (if @server
-    (do (info "Stopping the Mud server")
-        (.close @server))))
+    (dosync (info "Stopping the Mud server")
+            (.close @server)
+            (ref-set server nil))))

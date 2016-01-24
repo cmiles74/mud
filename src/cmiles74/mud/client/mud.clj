@@ -1,3 +1,4 @@
+
 (ns cmiles74.mud.client.mud
   (:require
    [taoensso.timbre :as timbre
@@ -51,9 +52,14 @@
   (let [server-host (:host (:server configuration))
         server-port (:port (:server configuration))
         server-socket @(http/websocket-client
-                        (str "ws://" server-host ":" server-port "/echo"))
+                        (str "ws://" server-host ":" server-port "/connect"))
         keybindings (build-keybindings server-socket)
-        console (console/create-interactive-console keybindings)]
+        console (console/create-interactive-console keybindings server-socket)]
+    (console/break-writeln-console console
+                                   (str "Connecting to server " server-host
+                                        " on port " server-port "..."))
     (handle-server-message server-socket console)
+    (console/break-writeln-console console
+                                   "Connected to server!")
     {:console console
      :server-socket server-socket}))

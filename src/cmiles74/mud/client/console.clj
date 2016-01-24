@@ -122,11 +122,10 @@
 
 (defn create-interactive-console
   "Creates a new console that can also handle keyboard input."
-  [keybindings]
+  [keybindings server-socket]
   (let [console (create-console)
         handle-input-flag (ref true)
         handle-server-flag (ref true)
-        server-socket @(http/websocket-client "ws://localhost:18080/echo")
         input-channel (async/chan 1024)
         input-agent (agent {:channel input-channel
                             :screen (:screen console)})
