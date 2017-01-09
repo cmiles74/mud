@@ -35,15 +35,15 @@
 ;; our event bus for broadcasts
 (def event-bus (bus/event-bus))
 
-(defn register-client [socket]
+(defn register-client [stream]
   (dosync (let [client-name (count @anonymous-clients)]
-            (alter anonymous-clients assoc (count @anonymous-clients) socket)
+            (alter anonymous-clients assoc (count @anonymous-clients) stream)
             ()
             client-name)))
 
-(defn welcome [socket]
-  (let [client-name  (register-client socket)]
-    (stream/put! socket (str "Welcome to the Mud Server, Client #" client-name "!"))
+(defn welcome [stream]
+  (let [client-name  (register-client stream)]
+    (stream/put! stream (str "Welcome to the Mud Server, Client #" client-name "!"))
     client-name))
 
 (defn websocket-handler
@@ -51,18 +51,18 @@
   (info "Handling incoming request...")
   (info request)
   (->
-   (deferred/let-flow [socket (http/websocket-connection request)]
-     (let [client-name (welcome socket)]
+   (deferred/let-flow [stream (http/websocket-connection request)]
+     (let [client-name (welcome stream)]
 
        ;; subscribe the new stream to our broadcast topic
        (stream/connect
-        (bus/subscribe event-bus ::broadcast) socket)
+        (bus/subscribe event-bus ::broadcast) stream)
 
        ;; consume all messages and post to broadcast stream
        (stream/consume
         (fn [message]
           (bus/publish! event-bus ::broadcast (str client-name ": " message)))
-        socket)))
+        stream)))
    (deferred/catch
        (fn [_] {:status 400
                 :headers {"content-type" "application/text"}
