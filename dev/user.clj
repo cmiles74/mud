@@ -6,7 +6,6 @@
                  spy get-env log-env)]
    [taoensso.timbre.profiling :as profiling
     :refer (pspy pspy* profile defnp p p*)]
-   [slingshot.slingshot :only [throw+ try+]]
-   [dire.core :refer [with-handler!]]))
+   [slingshot.slingshot :only [throw+ try+]]))
 
 (defn my-test [] (println "Hello from your test function :-)"))

@@ -21,4 +21,4 @@ docker run \
       --device /dev/snd \
       --name mud-emacs \
       --link mud-rethinkdb:rethinkdb \
-      cmiles74/emacs-clojure
+      cmiles74/emacs-js-clojure
