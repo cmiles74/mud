@@ -9,7 +9,6 @@
    [taoensso.timbre.profiling :as profiling
     :refer (pspy pspy* profile defnp p p*)]
    [slingshot.slingshot :only [throw+ try+]]
-   [dire.core :refer [with-handler!]]
    [aleph.http :as http]
    [manifold.stream :as stream]
    [manifold.deferred :as deferred]
@@ -59,7 +58,5 @@
                                    (str "Connecting to server " server-host
                                         " on port " server-port "..."))
     (handle-server-message server-socket console)
-    (console/break-writeln-console console
-                                   "Connected to server!")
     {:console console
      :server-socket server-socket}))

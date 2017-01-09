@@ -8,7 +8,6 @@
    [taoensso.timbre.profiling :as profiling
     :refer (pspy pspy* profile defnp p p*)]
    [slingshot.slingshot :only [throw+ try+]]
-   [dire.core :refer [with-handler!]]
    [aleph.http :as http]
    [manifold.stream :as stream]
    [manifold.deferred :as deferred]
