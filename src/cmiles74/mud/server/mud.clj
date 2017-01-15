@@ -26,6 +26,9 @@
   (timbre/merge-config!
    {:appenders {:spit (appenders/spit-appender {:fname "mud-server.log"})}}))
 
+(def client-max-message-rate 5)
+(def client-max-message-backlog 10)
+
 ;; our server instance
 (def server (ref nil))
 
@@ -35,10 +38,15 @@
 ;; our event bus for broadcasts
 (def event-bus (bus/event-bus))
 
+(defn repeat-bot [stream-in stream-out]
+  (stream/consume
+   (fn [message]
+     (stream/put! (str "bot: " message) stream-out))
+   stream-in))
+
 (defn register-client [stream]
   (dosync (let [client-name (count @anonymous-clients)]
             (alter anonymous-clients assoc (count @anonymous-clients) stream)
-            ()
             client-name)))
 
 (defn welcome [stream]
@@ -56,13 +64,18 @@
 
        ;; subscribe the new stream to our broadcast topic
        (stream/connect
-        (bus/subscribe event-bus ::broadcast) stream)
+        (bus/subscribe event-bus ::broadcast)
+        stream
+        {:timeout 1e4})
 
        ;; consume all messages and post to broadcast stream
        (stream/consume
         (fn [message]
           (bus/publish! event-bus ::broadcast (str client-name ": " message)))
-        stream)))
+        (stream/throttle
+         client-max-message-rate
+         client-max-message-backlog
+         stream))))
    (deferred/catch
        (fn [_] {:status 400
                 :headers {"content-type" "application/text"}

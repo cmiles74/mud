@@ -22,41 +22,41 @@
 
 (defn post-to-server-fn
   "Returns a function for posting  a textual message to the server."
-  [server-socket]
+  [server-stream]
   (fn [console]
 
     ;; post our message to the server
-    (stream/put! server-socket (apply str @(:input-buffer console)))
+    (stream/put! server-stream (apply str @(:input-buffer console)))
 
     ;; clear the input buffer and the input area
     (console/clear-input-buffer console)
     (console/clear-input-area console)))
 
 (defn handle-server-message
-  [server-socket console]
+  [server-stream console]
   (stream/consume
    (fn [message]
      (console/break-writeln-console console message))
-   server-socket))
+   server-stream))
 
 (defn build-keybindings
-  [server-socket]
+  [server-stream]
   (merge keybinding/DEFAULT-KEYBINDINGS
          {(keybinding/vim-keystroke "<Return>")
           {:description "Process the current input buffer"
-           :handler (post-to-server-fn server-socket)}}))
+           :handler (post-to-server-fn server-stream)}}))
 
 (defn create-client
   [configuration]
   (let [server-host (:host (:server configuration))
         server-port (:port (:server configuration))
-        server-socket @(http/websocket-client
+        server-stream @(http/websocket-client
                         (str "ws://" server-host ":" server-port "/connect"))
-        keybindings (build-keybindings server-socket)
-        console (console/create-interactive-console keybindings server-socket)]
+        keybindings (build-keybindings server-stream)
+        console (console/create-interactive-console keybindings server-stream)]
     (console/break-writeln-console console
                                    (str "Connecting to server " server-host
                                         " on port " server-port "..."))
-    (handle-server-message server-socket console)
+    (handle-server-message server-stream console)
     {:console console
-     :server-socket server-socket}))
+     :server-socket server-stream}))

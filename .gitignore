@@ -15,3 +15,7 @@ docs
 target
 .nrepl-port
 data
+node_modules
+project.org
+tmp.*
+*.tmp
