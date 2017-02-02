@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # allow X11 access
-xhost +local:docker
+xhost +local:
 
 # start containers
 docker start mud-rethinkdb
