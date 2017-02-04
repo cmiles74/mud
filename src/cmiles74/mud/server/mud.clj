@@ -105,7 +105,7 @@
 
        ;; welcome the client
        (welcome client)
-       (welcome client)
+       
        ;; describe the room to the client
        (describe-room client)
 
