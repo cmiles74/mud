@@ -1,4 +1,5 @@
 (ns cmiles74.mud.client.terminal
+  "Functions for managing terminal sessions"
   (:require
    [taoensso.timbre :as timbre
     :refer (log  trace  debug  info  warn  error  fatal  report

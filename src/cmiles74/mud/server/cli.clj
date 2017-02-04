@@ -39,7 +39,6 @@
          DEFAULT-CONFIG))))
 
 (def cli-options
-  "Returns a sequence of valid command line options and their description."
   [["-c" "--config FILE" "Path to the configuration file" :default nil]
    ["-h" "--help"]])
 

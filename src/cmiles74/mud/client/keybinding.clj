@@ -1,4 +1,5 @@
 (ns cmiles74.mud.client.keybinding
+  "Functions for managing keybindings"
   (:require [cmiles74.mud.client.console :as console])
   (:import [com.googlecode.lanterna.input KeyStroke]))
 
@@ -7,6 +8,7 @@
   [vim-description]
   (KeyStroke/fromString vim-description))
 
+;; map of default keybindings
 (def DEFAULT-KEYBINDINGS
   {(vim-keystroke "<BS>")
    {:description "Erase the previous chacter"

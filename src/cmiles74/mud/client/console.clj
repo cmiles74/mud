@@ -14,10 +14,12 @@
    [clojure.core.async :as async]
    [cmiles74.mud.client.terminal :as term]))
 
+;;
 ;; text management
+;;
 
 (defn break-lines
-  "Returns a sequence of lines, each of the width of the screen."
+  "Returns a sequence of lines, each of the provided width.."
   [width position text]
   (let [line-first (apply str (take (- width position) text))
         text-rest (drop (- width position) text)]
@@ -31,13 +33,13 @@
             lines))))))
 
 (defn pad-line
-  "Returns a new string padded out with spaces to match the supplied
-  width."
+  "Returns a new string padded out with spaces to match the supplied width."
   [width text]
   (apply str (cons text (apply str (take (- width (count text))
                                          (repeat " "))))))
-
+;;
 ;; console management
+;;
 
 (defn clear-console
   "Clears the console's display."
@@ -83,7 +85,10 @@
   (update-console-chrome console))
 
 (defn create-console
-  "Returns a new console instance."
+  "Returns a new map of console data. This map contains the following
+  keys: :screen, :write-cursor, :size. It creates a new terminal and initializes
+  the console. The :screen key in the map returns a reference to this consoles
+  terminal instance."
   []
   (let [screen-this (term/create)
         console-this {:screen screen-this
@@ -98,6 +103,7 @@
     console-this))
 
 (defn handle-unbound-key
+  "Handles unbounded keystrokes from the console by writing them to the screen."
   [console keystroke]
   (swap! (:input-buffer console) conj (.getCharacter keystroke))
   (term/write (:screen console) 2 (- (second @(:size console)) 1)
@@ -120,7 +126,9 @@
                 (recur)))))
 
 (defn create-interactive-console
-  "Creates a new console that can also handle keyboard input."
+  "Creates a new console that can also handle keyboard input and communication
+  with the server websocket stream. It returns a map of console data. This map
+  contains the following keys: :screen, :write-cursor, :size."
   [keybindings server-socket]
   (let [console (create-console)
         handle-input-flag (ref true)

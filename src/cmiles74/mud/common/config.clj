@@ -1,5 +1,5 @@
-(ns ^{:doc "Provides commonly used configuration management functions."}
-      cmiles74.mud.common.config
+(ns cmiles74.mud.common.config
+  "Provides commonly used configuration management functions."
   (:require
    [taoensso.timbre :as timbre
     :refer (log  trace  debug  info  warn  error  fatal  report
