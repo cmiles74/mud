@@ -20,11 +20,14 @@ When a client sends data to the server, it's broadcast to all connected clients.
 As for the fun parts, none of that stuff has been implemented yet.
 
 Developing
-----------
+------------
 
 This project is implemented in Clojure and (tentatively) backed by RethinkDB.
 You can get an idea for how slowly this project is progressing by the fact that
 when I started, RethinkDB as both promising and new.
+
+Developing with Docker
+---------------------------
 
 The easiest way to get started is to spin up a docker instance with the included
 script, it's in the root of the project directory.

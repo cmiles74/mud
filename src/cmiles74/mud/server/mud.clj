@@ -1,4 +1,5 @@
 (ns cmiles74.mud.server.mud
+  "The main MUD server"
   (:require
    [taoensso.timbre :as timbre
     :refer (log  trace  debug  info  warn  error  fatal  report
@@ -25,13 +26,16 @@
   (timbre/merge-config!
    {:appenders {:spit (appenders/spit-appender {:fname "mud-server.log"})}}))
 
+;; maximum messages any client can send per second
 (def client-max-message-rate 5)
+
+;; maximum backlog allowed per client
 (def client-max-message-backlog 10)
 
 ;; our server instance
 (def server (ref nil))
 
-;; map of client names to their streams
+;; map of anonymous client names to their websocket streams
 (def anonymous-clients (ref {}))
 
 ;; our event bus for broadcasts
@@ -43,23 +47,33 @@
      (stream/put! (str "bot: " message) stream-out))
    stream-in))
 
-(defn register-client [stream]
+(defn register-client
+  "Registers a new client with the server by assigning them a name and adding
+  their name and websocket stream to the anonymous-clients map."
+  [stream]
   (dosync (let [client-name (count @anonymous-clients)]
             (alter anonymous-clients assoc (count @anonymous-clients) stream)
             client-name)))
 
-(defn welcome [stream]
-  (let [client-name  (register-client stream)]
-    (stream/put! stream (str "Welcome to the Mud Server, Client #" client-name "!"))
-    client-name))
+(defn welcome
+  "Writes a welcome message for the provided client-name to the provided websocket stream."
+  [client-name stream]
+  (stream/put! stream (str "Welcome to the Mud Server, Client #" client-name "!")))
 
 (defn websocket-handler
+  "Handles an incoming client web request by creating a websocket stream for the
+  request and welcoming the new client."
   [request]
   (info "Handling incoming request...")
   (info request)
   (->
    (deferred/let-flow [stream (http/websocket-connection request)]
-     (let [client-name (welcome stream)]
+
+     ;; register the new client
+     (let [client-name (register-client stream)]
+
+       ;; welcome the client
+       (welcome client-name stream)
 
        ;; subscribe the new stream to our broadcast topic
        (stream/connect
@@ -80,6 +94,7 @@
                 :headers {"content-type" "application/text"}
                 :body "Expected a websocket connection!"}))))
 
+;; the web API
 (def api
   ["/api"
    (yada/swaggered
@@ -89,14 +104,17 @@
      :basePath "/api"}
     ["/hello" (yada/yada "Hello, Miles!")])])
 
+;; handler function for incoming web requests
 (def handler
   (make-handler ["/" {"connect" websocket-handler}]))
 
+;; the web application
 (def app
   (-> handler
       params/wrap-params))
 
 (defn start-server
+  "Starts the serveer with the provided map of configuration options."
   [configuration]
   (if (not @server)
     (let [server-port (:port (:server configuration))]
@@ -105,6 +123,7 @@
               (ref-set server (http/start-server app {:port server-port}))))))
 
 (defn stop-server
+  "Stops the currently running server."
   []
   (if @server
     (dosync (info "Stopping the Mud server")
