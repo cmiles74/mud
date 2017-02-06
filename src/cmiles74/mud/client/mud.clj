@@ -13,6 +13,7 @@
    [manifold.stream :as stream]
    [manifold.deferred :as deferred]
    [clojure.core.async :as async]
+   [cheshire.core :as json]
    [cmiles74.mud.client.console :as console]
    [cmiles74.mud.client.keybinding :as keybinding]))
 
@@ -20,22 +21,26 @@
   (timbre/merge-config!
    {:appenders {:spit (appenders/spit-appender {:fname "mud-client.log"})}}))
 
-(defn post-to-server-fn
-  "Returns a function for posting a textual message to the server via the
-  provided websocket stream. The returned function will take a console as it's
-  only argument. After the message has been posted, the input area (and buffer)
-  of the console will be cleared."
+(defn post-message
+  "Posts a chat message to the server."
+  [content]
+  (json/generate-smile {:type "message"
+                        :content content}))
+
+(defn handle-input-fn
+  "Handles all input from the client, typically the client sends this data by
+  pressing the return key."
   [server-stream]
   (fn [console]
 
-    ;; post our message to the server
-    (stream/put! server-stream (apply str @(:input-buffer console)))
+    ;; for now, treat everything as a chat message
+    (stream/put! server-stream (post-message (apply str @(:input-buffer console))))
 
     ;; clear the input buffer and the input area
     (console/clear-input-buffer console)
     (console/clear-input-area console)))
 
-(defn handle-server-message
+(defn handle-incoming-message
   "Reads incoming messages from the provided server websocket stream and writes
   them to the provided console."
   [server-stream console]
@@ -53,7 +58,7 @@
   (merge keybinding/DEFAULT-KEYBINDINGS
          {(keybinding/vim-keystroke "<Return>")
           {:description "Process the current input buffer"
-           :handler (post-to-server-fn server-stream)}}))
+           :handler (handle-input-fn server-stream)}}))
 
 (defn create-client
   "Creates a new map of client data for the provided map of configuration data.
@@ -72,6 +77,6 @@
     (console/break-writeln-console console
                                    (str "Connecting to server " server-host
                                         " on port " server-port "..."))
-    (handle-server-message server-stream console)
+    (handle-incoming-message server-stream console)
     {:console console
      :server-socket server-stream}))

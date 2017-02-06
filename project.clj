@@ -13,6 +13,7 @@
                  [com.googlecode.lanterna/lanterna "3.0.0-beta1"]
                  [bidi "1.25.0"]
                  [yada "1.1.0-20160125.190302-12"]
+                 [cheshire "5.7.0"]
                  [com.apa512/rethinkdb "0.11.0"]]
   :main cmiles74.mud.client.cli
 

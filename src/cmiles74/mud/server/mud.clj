@@ -21,6 +21,7 @@
    [yada.yada :as yada]
    [compojure.route :as route]
    [compojure.core :as compojure :refer [GET]]
+   [cheshire.core :as json]
    [cmiles74.mud.server.game :as game]))
 
 (defonce timbre-config
@@ -63,8 +64,14 @@
   "Returns a function that will handle incoming messages from the client and
   publish them over the broadcast channel."
   [client]
-  (fn [message]
-    (bus/publish! event-bus ::broadcast (str (:name client) ": " message))))
+  (fn [message-in]
+
+    ;; parse the incoming message
+    (let [message (json/parse-smile message-in true)]
+      (info "Received: " message)
+
+      (case (message :type)
+        "message" (bus/publish! event-bus ::broadcast (str (:name client) ": " (message :content)))))))
 
 (defn websocket-handler
   "Handles an incoming client web request by creating a websocket stream for the
