@@ -20,7 +20,8 @@
    [bidi.ring :refer [make-handler]]
    [yada.yada :as yada]
    [compojure.route :as route]
-   [compojure.core :as compojure :refer [GET]]))
+   [compojure.core :as compojure :refer [GET]]
+   [cmiles74.mud.server.game :as game]))
 
 (defonce timbre-config
   (timbre/merge-config!
@@ -38,25 +39,8 @@
 ;; map of anonymous client names to their websocket streams
 (def anonymous-clients (ref {}))
 
-;; map of rooms to clients
-(def rooms-clients (ref {}))
-
 ;; our event bus for broadcasts
 (def event-bus (bus/event-bus))
-
-(defn repeat-bot [name stream-in stream-out]
-  (stream/consume
-   (fn [message]
-     (stream/put! (str name " Bot: " message) stream-out))
-   stream-in))
-
-(def rooms
-  {1 {:name "Room 1"
-      :description "A red room with a large number \"1\" on the floor."
-      :exits {"east" 2}}
-   2 {:name "Room 2"
-      :description "A green room with a large number \"2\" on the floor."
-      :exits {"west" 1}}})
 
 (defn register-client
   "Registers a new client with the server by assigning them a name and adding
@@ -73,16 +57,11 @@
 (defn welcome
   "Writes a welcome message for the provided client-name to the provided websocket stream."
   [client]
-  (stream/put! (:websocket client) (str "Welcome to the Mud Server, Client #" (:name client) "!"))
-  (stream/put! (:websocket client) (str "You open the door and enter a room...")))
-
-(defn describe-room
-  [client]
-  (info ((rooms (:room client)) :description))
-  (stream/put! (:websocket client) ((rooms (:room client)) :description)))
+  (stream/put! (:websocket client) (str "Welcome to the Mud Server, " (:name client) "!")))
 
 (defn client-handler
-  "Returns a function that will handle incoming and outgoing messages to the client."
+  "Returns a function that will handle incoming messages from the client and
+  publish them over the broadcast channel."
   [client]
   (fn [message]
     (bus/publish! event-bus ::broadcast (str (:name client) ": " message))))
@@ -100,16 +79,13 @@
      (let [client (register-client stream)
            handler-fn (client-handler client)]
 
-       ;; place the client in the starting room
-       (dosync (alter rooms-clients assoc (:room client) (:name client)))
-
        ;; welcome the client
        (welcome client)
-       
-       ;; describe the room to the client
-       (describe-room client)
 
-       ;; subscribe the new stream to our broadcast topic
+       ;; setup the game for the client
+       (game/initialize-client client)
+
+       ;; subscribe the client's websocket stream to our broadcast topic
        (stream/connect
         (bus/subscribe event-bus ::broadcast)
         stream
@@ -134,7 +110,8 @@
             :version "1.0"
             :description "Demonstrating yada + swagger"}
      :basePath "/api"}
-    ["/hello" (yada/yada "Hello, Miles!")])])
+    ["/hello" (yada/yada "Hello from the MUD server!")])])
+
 
 ;; handler function for incoming web requests
 (def handler
