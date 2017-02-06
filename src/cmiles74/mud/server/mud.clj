@@ -58,7 +58,9 @@
 (defn welcome
   "Writes a welcome message for the provided client-name to the provided websocket stream."
   [client]
-  (stream/put! (:websocket client) (str "Welcome to the Mud Server, " (:name client) "!")))
+  (stream/put! (:websocket client)
+               (json/generate-smile {:type "welcome"
+                                     :content (str "Welcome to the Mud Server, " (:name client) "!")})))
 
 (defn client-handler
   "Returns a function that will handle incoming messages from the client and
@@ -68,10 +70,12 @@
 
     ;; parse the incoming message
     (let [message (json/parse-smile message-in true)]
-      (info "Received: " message)
 
       (case (message :type)
-        "message" (bus/publish! event-bus ::broadcast (str (:name client) ": " (message :content)))))))
+        "message" (bus/publish! event-bus ::broadcast
+                                (json/generate-smile {:type "message"
+                                                      :from (client :name)
+                                                      :content (message :content)}))))))
 
 (defn websocket-handler
   "Handles an incoming client web request by creating a websocket stream for the

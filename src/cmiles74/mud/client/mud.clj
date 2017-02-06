@@ -45,8 +45,20 @@
   them to the provided console."
   [server-stream console]
   (stream/consume
-   (fn [message]
-     (console/break-writeln-console console message))
+   (fn [message-in]
+     
+     ;; parse the incoming message
+     (let [message (json/parse-smile message-in true)]
+
+       (case (message :type)
+
+         "welcome" (console/break-writeln-console console (message :content))
+
+         "message" (console/break-writeln-console
+                    console (str (message :from) ": " (message :content)))
+
+         "room"    (console/break-writeln-console
+                    console (str ((message :content) :description))))))
    server-stream))
 
 (defn build-keybindings

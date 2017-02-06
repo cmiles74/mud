@@ -9,7 +9,8 @@
    [taoensso.timbre.profiling :as profiling
     :refer (pspy pspy* profile defnp p p*)]
    [manifold.stream :as stream]
-   [slingshot.slingshot :only [throw+ try+]]))
+   [slingshot.slingshot :only [throw+ try+]]
+   [cheshire.core :as json]))
 
   ;; map of rooms to clients
   (def rooms-clients (ref {}))
@@ -25,7 +26,9 @@
   (defn describe-room
     [client]
     (info ((rooms (:room client)) :description))
-    (stream/put! (:websocket client) ((rooms (:room client)) :description)))
+    (stream/put! (:websocket client)
+                 (json/generate-smile {:type "room"
+                                       :content (rooms (:room client))})))
 
   (defn initialize-client
     [client]
