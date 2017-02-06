@@ -62,6 +62,10 @@
                (json/generate-smile {:type "welcome"
                                      :content (str "Welcome to the Mud Server, " (:name client) "!")})))
 
+(defn handle-server-command
+  "Handles a server command from the client."
+  [client message])
+
 (defn client-handler
   "Returns a function that will handle incoming messages from the client and
   publish them over the broadcast channel."
@@ -72,10 +76,11 @@
     (let [message (json/parse-smile message-in true)]
 
       (case (message :type)
-        "message" (bus/publish! event-bus ::broadcast
-                                (json/generate-smile {:type "message"
-                                                      :from (client :name)
-                                                      :content (message :content)}))))))
+
+        "server-command" (handle-server-command client message)
+
+        ;; let the game handle the message
+        (game/handle-incoming-message client message)))))
 
 (defn websocket-handler
   "Handles an incoming client web request by creating a websocket stream for the
@@ -102,7 +107,7 @@
         stream
         {:timeout 1e4})
 
-       ;; consume and handle all client messages
+       ;; consume client messages and pass to our handler function
        (stream/consume handler-fn
         (stream/throttle
          client-max-message-rate

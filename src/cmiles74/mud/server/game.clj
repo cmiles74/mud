@@ -12,29 +12,56 @@
    [slingshot.slingshot :only [throw+ try+]]
    [cheshire.core :as json]))
 
-  ;; map of rooms to clients
-  (def rooms-clients (ref {}))
+;; map of rooms to clients
+(def rooms-clients (ref {}))
 
-  (def rooms
-    {1 {:name "Room 1"
-        :description "A red room with a large number \"1\" on the floor."
-        :exits {"east" 2}}
-     2 {:name "Room 2"
-        :description "A green room with a large number \"2\" on the floor."
-        :exits {"west" 1}}})
+;; map of clients to rooms
+(def clients-rooms (ref {}))
 
-  (defn describe-room
-    [client]
-    (info ((rooms (:room client)) :description))
-    (stream/put! (:websocket client)
-                 (json/generate-smile {:type "room"
-                                       :content (rooms (:room client))})))
+(def rooms
+  {1 {:name "Room 1"
+      :description "A red room with a large number \"1\" on the floor."
+      :exits {"east" 2}}
+   2 {:name "Room 2"
+      :description "A green room with a large number \"2\" on the floor."
+      :exits {"west" 1}}})
 
-  (defn initialize-client
-    [client]
+(defn describe-room
+  "Describes the room the client is in to the client."
+  [client]
+  (stream/put! (:websocket client)
+               (json/generate-smile {:type "room"
+                                     :content (rooms (:room client))})))
 
-    ;; place the client in the starting room
-    (dosync (alter rooms-clients assoc (:room client) (:name client)))
+(defn post-message-to-client
+  "Posts a message from one client to another."
+  [client-from message client-to]
+  (stream/put! (client-to :websocket)
+               (json/generate-smile {:type "message"
+                                     :from (client-from :name)
+                                     :content (message :content)})))
 
-    ;; describe the room to the client
-    (describe-room client))
+(defn post-message-room
+  "Posts a message to all the clients in the room."
+  [client message]
+  (let [room (@clients-rooms (client :name))
+        clients (@rooms-clients room)]
+    (dorun (map (partial post-message-to-client client message) clients))))
+
+(defn initialize-client
+  "Sets up the game for a client."
+  [client]
+
+  ;; place the client in the starting room
+  (dosync (alter rooms-clients assoc 1 (conj (rooms-clients 1) client)))
+  (dosync (alter clients-rooms assoc (:name client) 1))
+
+  ;; describe the room to the client
+  (describe-room client))
+
+(defn handle-incoming-message
+  "Handles incoming messages from the client. All incoming messages will be maps of data."
+  [client message]
+  (case (message :type)
+
+    "message" (post-message-room client message)))
