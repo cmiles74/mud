@@ -1,0 +1,2 @@
+#!/bin/bash
+java -Djava.awt.headless=true -jar target/mud-*-standalone.jar
