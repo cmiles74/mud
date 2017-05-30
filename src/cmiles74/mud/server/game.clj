@@ -26,13 +26,6 @@
       :description "A green room with a large number \"2\" on the floor."
       :exits {"west" 1}}})
 
-(defn describe-room
-  "Describes the room the client is in to the client."
-  [client]
-  (stream/put! (:websocket client)
-               (json/generate-smile {:type "room"
-                                     :content (rooms (:room client))})))
-
 (defn post-message-to-client
   "Posts a message from one client to another."
   [client-from message client-to]
@@ -41,6 +34,14 @@
                                      :from (client-from :name)
                                      :content (message :content)})))
 
+(defn notify-client-move
+  "Notifies the client that they mave moved to another room."
+  [client]
+  (post-message-to-client {:name "System"}
+                          {:type "move"
+                           :content (rooms (:room client))}
+                          client))
+
 (defn post-message-room
   "Posts a message to all the clients in the room."
   [client message]
@@ -48,20 +49,24 @@
         clients (@rooms-clients room)]
     (dorun (map (partial post-message-to-client client message) clients))))
 
+(defn move-client
+  "Moves the provided client to the specified target room and then notifies the
+  client that they have moved."
+  [client target-room]
+  (dosync (alter rooms-clients assoc target-room (conj (rooms-clients target-room) client))
+          (alter clients-rooms assoc (:name client) target-room))
+  (notify-client-move client))
+
 (defn initialize-client
   "Sets up the game for a client."
   [client]
-
-  ;; place the client in the starting room
-  (dosync (alter rooms-clients assoc 1 (conj (rooms-clients 1) client)))
-  (dosync (alter clients-rooms assoc (:name client) 1))
-
-  ;; describe the room to the client
-  (describe-room client))
+  (try
+   (move-client client 1)
+    (catch Exception e
+      (warn e))))
 
 (defn handle-incoming-message
   "Handles incoming messages from the client. All incoming messages will be maps of data."
   [client message]
   (case (message :type)
-
     "message" (post-message-room client message)))

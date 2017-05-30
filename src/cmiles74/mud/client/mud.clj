@@ -40,25 +40,27 @@
     (console/clear-input-buffer console)
     (console/clear-input-area console)))
 
+(defn write-console
+  "Writes the provided content to the console, lines are broken to fit."
+  [console content]
+  (console/break-writeln-console console content))
+
 (defn handle-incoming-message
   "Reads incoming messages from the provided server websocket stream and writes
   them to the provided console."
   [server-stream console]
   (stream/consume
    (fn [message-in]
-     
+
      ;; parse the incoming message
      (let [message (json/parse-smile message-in true)]
-
        (case (message :type)
 
-         "welcome" (console/break-writeln-console console (message :content))
+         "welcome" (write-console console (message :content))
 
-         "message" (console/break-writeln-console
-                    console (str (message :from) ": " (message :content)))
+         "message" (write-console console (str (message :from) ": " (message :content)))
 
-         "room"    (console/break-writeln-console
-                    console (str ((message :content) :description))))))
+         "move"    (write-console console (str (message :content))))))
    server-stream))
 
 (defn build-keybindings
