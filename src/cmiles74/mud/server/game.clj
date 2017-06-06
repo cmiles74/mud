@@ -10,7 +10,8 @@
     :refer (pspy pspy* profile defnp p p*)]
    [manifold.stream :as stream]
    [slingshot.slingshot :only [throw+ try+]]
-   [cheshire.core :as json]))
+   [cheshire.core :as json]
+   [clojure.string :as string]))
 
 ;; map of rooms to clients
 (def rooms-clients (ref {}))
@@ -34,13 +35,20 @@
                                      :from (client-from :name)
                                      :content (message :content)})))
 
+(defn post-move-to-client
+  "Posts a message to the client indicating that it has moved."
+  [message client-to]
+  (stream/put! (client-to :websocket)
+               (json/generate-smile {:type "move"
+                                     :from "System"
+                                     :content (message :content)})))
+
 (defn notify-client-move
   "Notifies the client that they mave moved to another room."
   [client]
-  (post-message-to-client {:name "System"}
-                          {:type "move"
-                           :content (rooms (:room client))}
-                          client))
+  (post-move-to-client {:type "move"
+                        :content (rooms (@clients-rooms (client :name)))}
+                       client))
 
 (defn post-message-room
   "Posts a message to all the clients in the room."
@@ -49,6 +57,23 @@
         clients (@rooms-clients room)]
     (dorun (map (partial post-message-to-client client message) clients))))
 
+(defn post-unknown-command
+  [client command argument]
+  (stream/put! (client :websocket)
+               (json/generate-smile
+                {:type "error"
+                 :from "system"
+                 :content (str "I don't know how to " command " with \""
+                               argument "\".")})))
+
+(defn post-error
+  [client message]
+  (stream/put! (client :websocket)
+               (json/generate-smile
+                {:type "error"
+                 :from "system"
+                 :content message})))
+
 (defn move-client
   "Moves the provided client to the specified target room and then notifies the
   client that they have moved."
@@ -56,6 +81,29 @@
   (dosync (alter rooms-clients assoc target-room (conj (rooms-clients target-room) client))
           (alter clients-rooms assoc (:name client) target-room))
   (notify-client-move client))
+
+(defn handle-move
+  [client argument]
+  (let [arguments (string/split argument #"\s")
+        room (rooms (@clients-rooms (client :name)))
+        target (if room ((room :exits) (first arguments)) nil)]
+    (if target
+      (move-client client target)
+      (post-error client (str "You cannot move \"" (first arguments) "\" from here.")))))
+
+;; map of commands to functions
+(def commands {"move" handle-move})
+
+(defn handle-command
+  [client command argument]
+  (info (str "Handling command \"" command "\" with argument \"" argument "\" for client " (client :name)))
+  (let [handler-fn (commands command)]
+    (if handler-fn
+      (try
+        (handler-fn client argument)
+        (catch Exception exception
+          (warn exception)))
+      (post-unknown-command client command argument))))
 
 (defn initialize-client
   "Sets up the game for a client."
@@ -69,4 +117,5 @@
   "Handles incoming messages from the client. All incoming messages will be maps of data."
   [client message]
   (case (message :type)
-    "message" (post-message-room client message)))
+    "message" (post-message-room client message)
+    (handle-command client (message :type) (message :content))))

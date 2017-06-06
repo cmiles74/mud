@@ -14,8 +14,11 @@
    [manifold.deferred :as deferred]
    [clojure.core.async :as async]
    [cheshire.core :as json]
+   [clojure.string :as string]
    [cmiles74.mud.client.console :as console]
    [cmiles74.mud.client.keybinding :as keybinding]))
+
+(def command-pattern (re-pattern "\\/([^\\s]+)"))
 
 (defonce timbre-config
   (timbre/merge-config!
@@ -27,14 +30,32 @@
   (json/generate-smile {:type "message"
                         :content content}))
 
+(defn post-command
+  "Posts a command message to the server."
+  [command argument]
+  (json/generate-smile {:type command
+                        :content (first argument)}))
+
+(defn parse-command [input]
+  (let [command (re-find command-pattern input)]
+    (if command
+      (conj [(second command)] (.trim (apply str (drop (count (first command)) input)))))))
+
 (defn handle-input-fn
   "Handles all input from the client, typically the client sends this data by
   pressing the return key."
   [server-stream]
   (fn [console]
 
-    ;; for now, treat everything as a chat message
-    (stream/put! server-stream (post-message (apply str @(:input-buffer console))))
+    (let [input (apply str @(:input-buffer console))
+          command (parse-command input)]
+      (if command
+
+        ;; post the command and argument
+        (stream/put! server-stream (post-command (first command) (rest command)))
+
+        ;; post a chat message
+        (stream/put! server-stream (post-message (apply str @(:input-buffer console))))))
 
     ;; clear the input buffer and the input area
     (console/clear-input-buffer console)
@@ -55,12 +76,16 @@
      ;; parse the incoming message
      (let [message (json/parse-smile message-in true)]
        (case (message :type)
-
          "welcome" (write-console console (message :content))
 
          "message" (write-console console (str (message :from) ": " (message :content)))
 
-         "move"    (write-console console (str (message :content))))))
+         "move"    (write-console console ((message :content) :description))
+
+         "error"   (write-console console (message :content))
+
+         (write-console (str "I received a message from the server that I do not understand: \""
+                             message "\"")))))
    server-stream))
 
 (defn build-keybindings
