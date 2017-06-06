@@ -27,6 +27,10 @@
       :description "A green room with a large number \"2\" on the floor."
       :exits {"west" 1}}})
 
+(defn get-room
+  [client]
+  (rooms (@clients-rooms (client :name))))
+
 (defn post-message-to-client
   "Posts a message from one client to another."
   [client-from message client-to]
@@ -47,7 +51,7 @@
   "Notifies the client that they mave moved to another room."
   [client]
   (post-move-to-client {:type "move"
-                        :content (rooms (@clients-rooms (client :name)))}
+                        :content (get-room client)}
                        client))
 
 (defn post-message-room
@@ -85,7 +89,7 @@
 (defn handle-move
   [client argument]
   (let [arguments (string/split argument #"\s")
-        room (rooms (@clients-rooms (client :name)))
+        room (get-room client)
         target (if room ((room :exits) (first arguments)) nil)]
     (if target
       (move-client client target)
