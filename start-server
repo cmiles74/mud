@@ -1,0 +1,2 @@
+#!/bin/bash
+java -classpath target/mud-*-standalone.jar cmiles74.mud.server.cli 
