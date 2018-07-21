@@ -4,6 +4,5 @@
 xhost +local:
 
 # start containers
-docker start mud-rethinkdb
 docker start mud-emacs
 

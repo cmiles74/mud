@@ -21,9 +21,7 @@
 (def DEFAULT-CONFIG
   {:logging {:level "debug"}
    :server {:host "localhost"
-            :port 18080}
-   :database {:host "mud-rethinkdb"
-              :port 28015}})
+            :port 18083}})
 
 ;; default name of the configuration file
 (def DEFAULT-CONFIG-FILE ".mud-server-config.yml")

@@ -1,4 +1,3 @@
 #!/bin/bash
-docker rm -v mud-rethinkdb
 docker rm -v mud-emacs
 

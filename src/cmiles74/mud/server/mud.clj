@@ -122,11 +122,11 @@
 (def api
   ["/api"
    (yada/swaggered
+    ["/hello" (yada/yada "Hello from the MUD server!")]
     {:info {:title "Hello World!"
             :version "1.0"
             :description "Demonstrating yada + swagger"}
-     :basePath "/api"}
-    ["/hello" (yada/yada "Hello from the MUD server!")])])
+     :basePath "/api"})])
 
 
 ;; handler function for incoming web requests

@@ -1,4 +1,3 @@
 #!/bin/bash
-docker stop mud-rethinkdb
 docker stop mud-emacs
 

@@ -3,14 +3,6 @@
 # allow X11 access
 xhost +local:docker
 
-# start rethinkdb
-docker run \
-       -d \
-       -v ${PWD}/data:/data \
-       -p 8080:8080 \
-       --name mud-rethinkdb \
-       rethinkdb:latest
-
 # start emacs
 docker run \
       -d \
@@ -20,5 +12,4 @@ docker run \
       -p 18080:18080 \
       --device /dev/snd \
       --name mud-emacs \
-      --link mud-rethinkdb:rethinkdb \
       cmiles74/docker-emacs-js-clojure

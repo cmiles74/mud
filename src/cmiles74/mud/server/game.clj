@@ -82,8 +82,19 @@
   "Moves the provided client to the specified target room and then notifies the
   client that they have moved."
   [client target-room]
-  (dosync (alter rooms-clients assoc target-room (conj (rooms-clients target-room) client))
-          (alter clients-rooms assoc (:name client) target-room))
+  (dosync
+
+   ;; remove the client form the current room
+   (let [source-room (get-room client)]
+     (alter rooms-clients assoc source-room
+            (remove #(= % client) (rooms-clients source-room))))
+
+   ;; add the client to the target room
+   (alter rooms-clients assoc target-room
+          (conj (rooms-clients target-room) client))
+
+   ;; set the current room for the client
+   (alter clients-rooms assoc (:name client) target-room))
   (notify-client-move client))
 
 (defn handle-move

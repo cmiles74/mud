@@ -57,7 +57,7 @@ need to pass in the name of the server bootstrap class.
 
     java -classpath target/mud-0.1-SNAPSHOT-standalone.jar cmiles74.mud.server.cli 
     
-This will start up the server, it will listen on port 18080 on your local
+This will start up the server, it will listen on port 18083 on your local
 machine for new client connections.
 
 Starting up the client is similar...
@@ -67,3 +67,13 @@ Starting up the client is similar...
 Here we are telling Java to start up in "headless" mode. If we don't specify
 headless we will be provided with a Swing based terminal. This is nice when
 testing but it doesn't behave entirely like a real terminal session.
+
+To use a different port, you can copy the sample configuration files and edit
+them. When you start the client and server, pass in the "-c" flag and the path
+to your configuration file.
+
+    java -classpath target/mud-0.1-SNAPSHOT-standalone.jar cmiles74.mud.server.cli \
+    -c mud-server.yml
+    
+You can call either one with the "-h" flag to see a list of options, right now
+setting the configuration file is the only one.

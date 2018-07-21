@@ -1,21 +1,22 @@
 (defproject cmiles74/mud "0.1-SNAPSHOT"
   :description "A Simple Multi User Dungeon"
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/core.async "0.2.374"]
-                 [org.clojure/tools.cli "0.3.3"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
+                 [org.clojure/core.async "0.4.474"]
+                 [org.clojure/tools.cli "0.3.7"]
                  [clj-yaml "0.4.0"]
-                 [com.taoensso/timbre "4.2.1"]
+                 [com.taoensso/timbre "4.10.0"]
                  [slingshot "0.12.2"]
-                 [ring "1.4.0"]
-                 [compojure "1.3.4"]
-                 [manifold "0.1.1"]
-                 [aleph "0.4.1-beta2"]
-                 [com.googlecode.lanterna/lanterna "3.0.0-beta1"]
-                 [bidi "1.25.0"]
-                 [yada "1.1.0-20160125.190302-12"]
-                 [cheshire "5.7.0"]
-                 [com.apa512/rethinkdb "0.11.0"]]
-  :main cmiles74.mud.client.cli
+                 [javax.servlet/servlet-api "2.5"]
+                 [ring "1.6.3"]
+                 [compojure "1.6.1"]
+                 [manifold "0.1.8"]
+                 [org.slf4j/slf4j-simple "1.7.25"]
+                 [aleph "0.4.6"]
+                 [com.googlecode.lanterna/lanterna "3.0.1"]
+                 [bidi "2.1.3"]
+                 [yada "1.2.13"]
+                 [cheshire "5.8.0"]]
+  :main cmiles74.mud.client.clileinq
 
   :profiles {:uberjar {:aot :all}
              :dev {:source-paths ["dev"]}})
