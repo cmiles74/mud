@@ -16,7 +16,8 @@
                  [bidi "2.1.3"]
                  [yada "1.2.13"]
                  [cheshire "5.8.0"]]
-  :main cmiles74.mud.client.clileinq
+  :main cmiles74.mud.client.cli
 
   :profiles {:uberjar {:aot :all}
              :dev {:source-paths ["dev"]}})
+
