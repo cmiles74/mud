@@ -22,7 +22,8 @@
    [compojure.route :as route]
    [compojure.core :as compojure :refer [GET]]
    [cheshire.core :as json]
-   [cmiles74.mud.server.game :as game]))
+   [cmiles74.mud.server.game :as game]
+   [cmiles74.mud.server.data :as data]))
 
 (defonce timbre-config
   (timbre/merge-config!
@@ -37,9 +38,6 @@
 ;; our server instance
 (def server (ref nil))
 
-;; map of anonymous client names to their websocket streams
-(def anonymous-clients (ref {}))
-
 ;; our event bus for broadcasts
 (def event-bus (bus/event-bus))
 
@@ -48,19 +46,14 @@
   their name and websocket stream to the anonymous-clients map. Returns a map of
   client data."
   [stream]
-  (dosync (let [client-name (count @anonymous-clients)
-                client-map {:websocket stream
-                            :name (str "Anonymous #" client-name)
-                            :room 1}]
-            (alter anonymous-clients assoc client-name client-map)
-            client-map)))
+  (data/add-anonymous-client stream))
 
 (defn welcome
   "Writes a welcome message for the provided client-name to the provided websocket stream."
   [client]
-  (stream/put! (:websocket client)
+  (stream/put! (:connection client)
                (json/generate-smile {:type "welcome"
-                                     :content (str "Welcome to the Mud Server, " (:name client) "!")})))
+                                     :content (str "Welcome to the Mud Server, " (client :friendly-name) "!")})))
 
 (defn handle-server-command
   "Handles a server command from the client."
@@ -86,7 +79,6 @@
   "Handles an incoming client web request by creating a websocket stream for the
   request and welcoming the new client."
   [request]
-  (info "Handling incoming request...")
   (info request)
   (->
    (deferred/let-flow [stream (http/websocket-connection request)]

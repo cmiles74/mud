@@ -11,38 +11,21 @@
    [manifold.stream :as stream]
    [slingshot.slingshot :only [throw+ try+]]
    [cheshire.core :as json]
-   [clojure.string :as string]))
-
-;; map of rooms to clients
-(def rooms-clients (ref {}))
-
-;; map of clients to rooms
-(def clients-rooms (ref {}))
-
-(def rooms
-  {1 {:name "Room 1"
-      :description "A red room with a large number \"1\" on the floor."
-      :exits {"east" 2}}
-   2 {:name "Room 2"
-      :description "A green room with a large number \"2\" on the floor."
-      :exits {"west" 1}}})
-
-(defn get-room
-  [client]
-  (rooms (@clients-rooms (client :name))))
+   [clojure.string :as string]
+   [cmiles74.mud.server.data :as data]))
 
 (defn post-message-to-client
   "Posts a message from one client to another."
   [client-from message client-to]
-  (stream/put! (client-to :websocket)
+  (stream/put! (client-to :connection)
                (json/generate-smile {:type "message"
-                                     :from (client-from :name)
+                                     :from (client-from :handle)
                                      :content (message :content)})))
 
 (defn post-move-to-client
   "Posts a message to the client indicating that it has moved."
   [message client-to]
-  (stream/put! (client-to :websocket)
+  (stream/put! (client-to :connection)
                (json/generate-smile {:type "move"
                                      :from "System"
                                      :content (message :content)})))
@@ -51,19 +34,19 @@
   "Notifies the client that they mave moved to another room."
   [client]
   (post-move-to-client {:type "move"
-                        :content (get-room client)}
+                        :content (data/get-client-room (client :id))}
                        client))
 
 (defn post-message-room
   "Posts a message to all the clients in the room."
   [client message]
-  (let [room (@clients-rooms (client :name))
-        clients (@rooms-clients room)]
+  (let [room-id (data/get-client-room-id (:id client))
+        clients (data/get-room-clients room-id)]
     (dorun (map (partial post-message-to-client client message) clients))))
 
 (defn post-unknown-command
   [client command argument]
-  (stream/put! (client :websocket)
+  (stream/put! (client :connection)
                (json/generate-smile
                 {:type "error"
                  :from "system"
@@ -72,7 +55,7 @@
 
 (defn post-error
   [client message]
-  (stream/put! (client :websocket)
+  (stream/put! (client :connection)
                (json/generate-smile
                 {:type "error"
                  :from "system"
@@ -82,25 +65,13 @@
   "Moves the provided client to the specified target room and then notifies the
   client that they have moved."
   [client target-room]
-  (dosync
-
-   ;; remove the client form the current room
-   (let [source-room (get-room client)]
-     (alter rooms-clients assoc source-room
-            (remove #(= % client) (rooms-clients source-room))))
-
-   ;; add the client to the target room
-   (alter rooms-clients assoc target-room
-          (conj (rooms-clients target-room) client))
-
-   ;; set the current room for the client
-   (alter clients-rooms assoc (:name client) target-room))
+  (data/move-client-room (client :id) target-room)
   (notify-client-move client))
 
 (defn handle-move
   [client argument]
   (let [arguments (string/split argument #"\s")
-        room (get-room client)
+        room (data/get-client-room (client :id))
         target (if room ((room :exits) (first arguments)) nil)]
     (if target
       (move-client client target)
@@ -111,7 +82,7 @@
 
 (defn handle-command
   [client command argument]
-  (info (str "Handling command \"" command "\" with argument \"" argument "\" for client " (client :name)))
+  (info (str "Handling command \"" command "\" with argument \"" argument "\" for client " (client :handle)))
   (let [handler-fn (commands command)]
     (if handler-fn
       (try
@@ -124,7 +95,7 @@
   "Sets up the game for a client."
   [client]
   (try
-   (move-client client 1)
+    (move-client client 1)
     (catch Exception e
       (warn e))))
 

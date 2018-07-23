@@ -59,7 +59,8 @@
                  :friendly-name (str "Anonymous #" id)
                  :handle (str "anon-" id)
                  :connection connection}]
-     (alter clients assoc id client))))
+     (alter clients assoc id client)
+     client)))
 
 (defn get-client
   "Returns the client with the given unique identifier."
@@ -75,7 +76,7 @@
   "Associated the provided client identifier with the provided room identifier."
   [client-id room-id]
   (dosync
-   (let [clients-in (@rooms-clients room-id)
+   (let [clients-in (@room-clients room-id)
          clients-out (if (nil? clients-in) [] clients-in)]
      (alter room-clients assoc room-id (conj clients-out client-id))
      (alter client-room assoc client-id room-id))))
