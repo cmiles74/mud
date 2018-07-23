@@ -48,9 +48,9 @@ script, it's in the root of the project directory.
 
     ./docker-run
     
-This will download my handle Emacs/Javascript/Clojure image, map in the project
-files and bring up a new Emacs window. From there you can browse through the
-source code and start up a new REPL session with Cider (Control-c, Meta-j).
+This will download my Emacs/Javascript/Clojure image, map in the project files
+and bring up a new Emacs window. From there you can browse through the source
+code and start up a new REPL session with Cider (Control-c, Meta-j).
 
 Right now Emacs in the Docker image pins the Clojure tools to the version in
 MELPA stable. Most of the time this is good, but there can be problems when some
