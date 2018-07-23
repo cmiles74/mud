@@ -28,6 +28,18 @@ This is a personal project, I work on it over the weekend sometimes or while I'm
 on vacation. It's progressing pretty slowly but every so often I find some time
 and add more features.
 
+How Does It Work?
+-------------------
+
+A lot of the MUD implementations out there use their own wacky network protocol.
+In contrast, this project uses
+[websockets](https://en.wikipedia.org/wiki/WebSocket) and
+[JSON](https://en.wikipedia.org/wiki/JSON) for communication. I was interested
+in what it might take to code up a console based Java application, so that's
+what the current client uses. If you start the client up in "headless" mode, it
+will work with most any terminal, if you start it up regular style it will use a
+Swing based terminal which is kind of okay but has some quirks.
+
 Developing with Docker
 ---------------------------
 
