@@ -20,8 +20,8 @@
 ;; default configuration
 (def DEFAULT-CONFIG
   {:logging {:level "debug"}
-   :server {:host "localhost"
-            :port 18083}})
+   :server {:host "mud.nervestaple.com"
+            :port 443}})
 
 ;; default name of the configuration file
 (def DEFAULT-CONFIG-FILE ".mud-client-config.yml")

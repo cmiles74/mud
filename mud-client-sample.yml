@@ -1,6 +1,6 @@
 server:
   host: localhost
-  port: 18080
+  port: 18083
 
 logging:
   level: info

@@ -110,7 +110,8 @@
   (let [server-host (:host (:server configuration))
         server-port (:port (:server configuration))
         server-stream @(http/websocket-client
-                        (str "ws://" server-host ":" server-port "/connect"))
+                        (str (if (= 443 server-port) "wss://" "ws://")
+                             server-host ":" server-port "/connect"))
         keybindings (build-keybindings server-stream)
         console (console/create-interactive-console keybindings server-stream)]
     (console/break-writeln-console console
