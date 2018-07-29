@@ -88,7 +88,7 @@ Starting up the client is similar...
 Here we are telling Java to start up in "headless" mode. If we don't specify
 headless we will be provided with a Swing based terminal. This is nice when
 testing but it doesn't behave entirely like a real terminal session. You can
-also use the script `start-client`.
+also use the script `start-client-local`.
 
 To use a different port, you can copy the sample configuration files and edit
 them. When you start the client and server, pass in the "-c" flag and the path
@@ -99,3 +99,10 @@ to your configuration file.
     
 You can call either one with the "-h" flag to see a list of options, right now
 setting the configuration file is the only one.
+
+Test Server
+------------
+
+There's a public test server running at http://mud.nervestaple.com, it also
+supports SSL. If you run the client without specifying a configuration file or
+with the `start-client` script, it will connect to this test server.
