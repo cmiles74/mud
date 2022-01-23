@@ -1,8 +1,11 @@
-{:aliases  {:dev {:extra-paths ["development/src"]
+{:aliases  {:dev {:extra-paths ["development/src"
+                                "components/log/src"
+                                "components/log/resources"]
                   :extra-deps {org.clojure/clojure {:mvn/version "1.10.3"}
-                               org.clojure/tools.deps.alpha {:mvn/version "0.12.1003"}}}
+                               org.clojure/tools.deps.alpha {:mvn/version "0.12.1003"}
+                               com.taoensso/timbre {:mvn/version "5.1.2"}}}
 
-            :test {:extra-paths []}
+            :test {:extra-paths ["components/log/test"]}
 
             :poly {:main-opts ["-m" "polylith.clj.core.poly-cli.core"]
                    :extra-deps {polyfy/polylith
