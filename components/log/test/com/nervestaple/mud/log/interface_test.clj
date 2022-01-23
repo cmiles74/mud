@@ -1,7 +1,7 @@
-(ns com.nervestaple.log.interface-test
+(ns com.nervestaple.mud.log.interface-test
   (:require [clojure.string :as string]
             [clojure.test :as test :refer [deftest testing is]]
-            [com.nervestaple.log.interface :as log]))
+            [com.nervestaple.mud.log.interface :as log]))
 
 (defmacro with-err-str
   "Evaluates expressions in a context in which *out* is bound to a fresh

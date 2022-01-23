@@ -1,4 +1,4 @@
-(ns com.nervestaple.log.core
+(ns com.nervestaple.mud.log.core
   (:require
    [taoensso.timbre :as timbre]
    [taoensso.timbre.appenders.core :as appenders]))

@@ -1,6 +1,6 @@
-(ns com.nervestaple.config.interface
+(ns com.nervestaple.mud.config.interface
   (:require
-   [com.nervestaple.config.core :as core]))
+   [com.nervestaple.mud.config.core :as core]))
 
 (defn read-from-resource
   "Reads and parses an resource file from the provided path and returns the

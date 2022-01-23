@@ -1,6 +1,6 @@
-(ns com.nervestaple.cli.interface
+(ns com.nervestaple.mud.cli.interface
   (:require
-    [com.nervestaple.cli.core :as core]))
+    [com.nervestaple.mud.cli.core :as core]))
 
 
 (defn parse-cli-args

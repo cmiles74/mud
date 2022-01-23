@@ -1,8 +1,8 @@
-(ns com.nervestaple.config.core
+(ns com.nervestaple.mud.config.core
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.string :as string]
-            [com.nervestaple.log.interface :as log]))
+            [com.nervestaple.mud.log.interface :as log]))
 
 (defn read-from-resource
   [resource-path]

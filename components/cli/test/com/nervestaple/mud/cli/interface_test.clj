@@ -1,6 +1,6 @@
-(ns com.nervestaple.cli.interface-test
+(ns com.nervestaple.mud.cli.interface-test
   (:require [clojure.test :as test :refer [deftest testing is]]
-            [com.nervestaple.cli.interface :as cli]))
+            [com.nervestaple.mud.cli.interface :as cli]))
 
 (deftest test-cli-start
   (testing "Valid options and arguments")

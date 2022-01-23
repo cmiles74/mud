@@ -1,6 +1,6 @@
-(ns com.nervestaple.log.interface
+(ns com.nervestaple.mud.log.interface
   (:require
-   [com.nervestaple.log.core :as core]))
+   [com.nervestaple.mud.log.core :as core]))
 
 (defn add-file
   "Adds a new \"spit\" appender to the current log configuration, all log

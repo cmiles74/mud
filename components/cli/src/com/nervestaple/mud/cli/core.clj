@@ -1,4 +1,4 @@
-(ns com.nervestaple.cli.core
+(ns com.nervestaple.mud.cli.core
   (:require
    [clojure.string :as string]
    [clojure.tools.cli :as cli]))

@@ -1,6 +1,6 @@
-(ns com.nervestaple.config.interface-test
+(ns com.nervestaple.mud.config.interface-test
   (:require [clojure.test :as test :refer [deftest testing is]]
-            [com.nervestaple.config.interface :as config]))
+            [com.nervestaple.mud.config.interface :as config]))
 
 (deftest test-read-from-resource
   (testing "Ensure a map is always returned when reading a resource")
