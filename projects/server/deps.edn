@@ -1,0 +1,15 @@
+{:paths ["resources"]
+ :deps {poly/cli {:local/root "../../components/cli"}
+        poly/config {:local/root "../../components/config"}
+        poly/log {:local/root "../../components/log"}
+        poly/server {:local/root "../../bases/server"}}
+
+ :aliases {:test {:extra-paths []
+                  :extra-deps  {}}
+
+           :uberjar {:replace-deps {com.github.seancorfield/depstar {:mvn/version "2.1.278"}}
+                     :exec-fn hf.depstar/uberjar
+                     :exec-args {:jar "mud-server.jar"
+                                 :main-class "com.nervestaple.mud.server.core"
+                                 :aot true}}}}
+

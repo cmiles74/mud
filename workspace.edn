@@ -1,4 +1,4 @@
-{:top-namespace "com.nervestaple"
+{:top-namespace "com.nervestaple.mud"
  :interface-ns "interface"
  :default-profile-name "default"
  :compact-views #{}
@@ -6,4 +6,5 @@
        :auto-add true}
  :tag-patterns {:stable "stable-*"
                 :release "v[0-9]*"}
- :projects {"development" {:alias "dev"}}}
+ :projects {"development" {:alias "dev"}
+            "server" {:alias "server"}}}

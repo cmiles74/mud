@@ -4,7 +4,10 @@
                                 "components/config/src"
                                 "components/config/resources"
                                 "components/log/src"
-                                "components/log/resources"]
+                                "components/log/resources"
+
+                                "bases/server/src"
+                                "bases/server/resources"]
 
                   :extra-deps {org.clojure/clojure {:mvn/version "1.10.3"}
                                org.clojure/tools.cli {:mvn/version "1.0.206"}
@@ -13,7 +16,9 @@
 
             :test {:extra-paths ["components/cli/test"
                                  "components/config/test"
-                                 "components/log/test"]}
+                                 "components/log/test"
+
+                                 "bases/server/test"]}
 
             :poly {:main-opts ["-m" "polylith.clj.core.poly-cli.core"]
                    :extra-deps {polyfy/polylith
