@@ -22,15 +22,21 @@
 .idea/replstate.xml
 *.iml
 
-/example/example/**
-artifacts
-projects/**/pom.xml
+# Emacs
+.#*
 
 # nrepl
 .nrepl-port
 
 # clojure-lsp
-.lsp/sqlite*.db
+.lsp
 
 # Calva VS Code Extension
 .calva/output-window/output.calva-repl
+
+# CLJ Kondo
+.clj-kondo
+
+/example/example/**
+artifacts
+projects/**/pom.xml
