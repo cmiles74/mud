@@ -13,7 +13,7 @@ This project is far from finished and it's not at the point where there's a real
 game to play, but some things are working. The server runs, clients can connect
 and talk to each other, and movement has been implemented.
 
-## Developing
+## Requirements
 
 This project is written in Clojure, we're using the Polylith tool to manage
 dependencies, building, etc.
@@ -40,6 +40,48 @@ The Polylith documentation can be found here:
 - The [RealWorld example app documentation](https://github.com/furkan3ayraktar/clojure-polylith-realworld-example-app)
 
 You can also get in touch with the Polylith Team via our [forum](https://polylith.freeflarum.com) or on [Slack](https://clojurians.slack.com/archives/C013B7MQHJQ).
+
+## Building and Running
+
+We have two projects, one for the server application and another for the client.
+To build the server project, switch to it's directory and then use the Clojure
+command line tool to build a standalone JAR file. More detailed instructions are
+in the the `readme.md` file in each project. :wink:
+
+## Developing
+
+We've tried to make working on this project as easy as possible!
+
+### Running Tests
+
+You may run the test suite from the root of the project.
+
+```shell
+$ poly test
+```
+
+We can also ask Polylith to "check" our workspace and make sure we're not doing
+anything unexpected, like calling functions without using their interface, etc.
+
+```shell
+$ poly check
+```
+
+Both of these are run as part of our continuous integration workflow and will be
+flagged as a build failure.
+
+### Adding Dependencies
+
+I found this a little odd, but if you need to get the Clojure tool to download
+dependencies you may run the following command.
+
+```shell
+$ clj -X:deps prep
+```
+
+This will download any outstanding dependencies without logging a cryptic error.
+
+----
 
 [ccl-tool]: https://clojure.org/guides/getting_started
 [cclw-tool]: https://github.com/clojure/tools.deps.alpha/wiki/clj-on-Windows
