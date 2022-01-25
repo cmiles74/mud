@@ -5,7 +5,8 @@
                                 "components/config/resources"
                                 "components/log/src"
                                 "components/log/resources"
-
+                                "bases/client/src"
+                                "bases/client/resources"
                                 "bases/server/src"
                                 "bases/server/resources"]
 
@@ -17,7 +18,7 @@
             :test {:extra-paths ["components/cli/test"
                                  "components/config/test"
                                  "components/log/test"
-
+                                 "bases/client/test"
                                  "bases/server/test"]}
 
             :poly {:main-opts ["-m" "polylith.clj.core.poly-cli.core"]

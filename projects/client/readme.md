@@ -1,9 +1,8 @@
-# Server
+# Client
 
-This project provides the server for the project. Once you have a Mud server
-up-and-running, clients can connect and interact with the dungeon and each
-other.
-
+This project provides the console client for interacting with the Mud server. It
+provides a friendly terminal based user interface (TUI) that makes it easy to
+connect and communicate with other players.
 
 ## Building and Running
 
@@ -18,7 +17,7 @@ The JAR file will be created and you may then invoke it from the terminal. The
 command below will display the usage information for the tool.
 
 ```shell
-$ java -jar mud-server.jar -h
+$ java -jar mud-client.jar -h
 ```
 
 A sample configuration file is provided. You may copy the `config.edn.sample`
@@ -28,5 +27,7 @@ The application can be started from the terminal by invoking the JAR without any
 arguments.
 
 ```shell
-$ java -jar mud-server.jar
+$ java -jar mud-client.jar
 ```
+
+
