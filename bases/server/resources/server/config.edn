@@ -1,0 +1,3 @@
+ {:mud_log_level "debug"
+  :mud_host "localhost"
+  :mud_port 18083}
