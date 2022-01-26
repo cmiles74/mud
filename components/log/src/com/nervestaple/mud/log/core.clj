@@ -3,10 +3,14 @@
    [taoensso.timbre :as timbre]
    [taoensso.timbre.appenders.core :as appenders]))
 
+(def LOG-LEVELS [:trace :debug :info :warn :error :fatal :report])
+
 (defn add-file
   [file-name]
+  (timbre/debug (str "Logging to \"" file-name "\""))
   (timbre/merge-config!
-   {:appenders {:spit (appenders/spit-appender {:fname file-name})}}))
+   {:appenders (merge (timbre/*config* :appenders)
+                      {:spit (appenders/spit-appender {:fname file-name})})}))
 
 (defn set-ns-log-level
   ([namespace log-level]

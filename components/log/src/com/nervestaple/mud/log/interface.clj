@@ -2,6 +2,9 @@
   (:require
    [com.nervestaple.mud.log.core :as core]))
 
+;; sequence of valid log levels
+(def LOG-LEVELS core/LOG-LEVELS)
+
 (defn add-file
   "Adds a new \"spit\" appender to the current log configuration, all log
   messages will be written to this file. Returns the current logging
