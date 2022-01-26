@@ -10,10 +10,17 @@
                                 "bases/server/src"
                                 "bases/server/resources"]
 
-                  :extra-deps {org.clojure/clojure {:mvn/version "1.10.3"}
+                  :extra-deps {aleph/aleph {:mvn/version "0.4.6"}
+                               bidi/bidi {:mvn/version "2.1.6"}
+                               cheshire/cheshire {:mvn/version "5.10.2"}
+                               com.fzakaria/slf4j-timbre {:mvn/version "0.3.21"}
+                               com.taoensso/timbre {:mvn/version "5.1.2"}
+                               manifold/manifold {:mvn/version "0.2.3"}
+                               org.clojure/clojure {:mvn/version "1.10.3"}
                                org.clojure/tools.cli {:mvn/version "1.0.206"}
-                               org.clojure/tools.deps.alpha {:mvn/version "0.12.1003"}
-                               com.taoensso/timbre {:mvn/version "5.1.2"}}}
+                               org.clojure/tools.deps.alpha {:mvn/version "0.12.1120"}
+                               ring/ring {:mvn/version "1.6.3"}
+                               yada/yada {:mvn/version "1.2.15"}}}
 
             :test {:extra-paths ["components/cli/test"
                                  "components/config/test"
@@ -26,3 +33,4 @@
                                 {:git/url   "https://github.com/polyfy/polylith"
                                  :sha       "19aaaa78094a433862d999c82b3536714ab96973"
                                  :deps/root "projects/poly"}}}}}
+
