@@ -2,6 +2,23 @@
   (:require
     [com.nervestaple.mud.cli.core :as core]))
 
+;; exit codes
+(def SUCCESS core/SUCCESS)
+(def WARN core/WARN)
+
+(defn error-msg
+  "Accepts a sequence of strings. Returns a string by appending a generic error
+  message and then joining the sequence together with new lines between each
+  one."
+  [errors]
+  (core/error-msg errors))
+
+(defn exit
+  "Accepts an exit status and a sequence of strings. Joins the strings with new
+  lines and displays the provided message, then exits the runtime with the given
+  status."
+  [status message]
+  (core/exit status (error-msg message)))
 
 (defn parse-cli-args
   "This function does several thins in order to make it easier to integrate a

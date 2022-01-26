@@ -80,7 +80,8 @@ provide a real, live command line experience!
   (cli/parse-cli-args cli-usage
                       cli-options
                       cli-validate
-                      cli-handle-arguments))
+                      cli-handle-arguments
+                      args))
 ```
 
 [clojure-tools-cli]: https://github.com/clojure/tools.cli
