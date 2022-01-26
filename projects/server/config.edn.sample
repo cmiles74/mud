@@ -1,0 +1,13 @@
+{
+  ;; minimum log level
+  :mud_log_level "info"
+
+  ;; log file
+  :mud_out_log "mud-server.log"
+
+  ;; hostname for the server
+  :mud_host "localhost"
+
+  ;; port for the server to listen on
+  :mud_port 18083
+}
