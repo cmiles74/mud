@@ -4,7 +4,8 @@
    [clojure.string :as string]
    [com.nervestaple.mud.cli.interface :as cli]
    [com.nervestaple.mud.config.interface :as config]
-   [com.nervestaple.mud.log.interface :as log])
+   [com.nervestaple.mud.log.interface :as log]
+   [com.nervestaple.mud.server.mud :as mud])
   (:gen-class))
 
 (def CLI-USAGE
@@ -82,7 +83,8 @@
       (log/set-min-level (log-level->key (config :mud_log_level))))
 
     (log/info "Welcome to the Mud server!")
-    (log/debug "Using the configuration" config)))
+    (log/debug "Using the configuration" config)
+    (mud/start-server config)))
 
 (defn -main
   "Bootstrapping function for the server"
