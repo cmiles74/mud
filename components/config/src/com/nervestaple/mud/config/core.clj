@@ -22,7 +22,7 @@
 
                  ;; ensure we have a file path
                  (not file-path)
-                 (log/debug "No configuration file path was provided!")
+                 (log/debug "No configuration file path was provided, using defaults")
 
                  ;; make sure the file exists
                  (not (.exists file))
@@ -49,7 +49,7 @@
   (into {}
         (map #(when (System/getenv %)
                 [(keyword (string/lower-case %)) (System/getenv %)])
-        variable-list)))
+             variable-list)))
 
 (defn read-config
   [resource-path file-path variable-list]
