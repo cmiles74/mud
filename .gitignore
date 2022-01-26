@@ -41,3 +41,4 @@
 artifacts
 projects/**/pom.xml
 *.jar
+*.log
