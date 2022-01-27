@@ -1,6 +1,7 @@
 {:paths ["resources"]
  :deps {poly/cli {:local/root "../../components/cli"}
         poly/config {:local/root "../../components/config"}
+        poly/game {:local/root "../../components/game"}
         poly/log {:local/root "../../components/log"}
         poly/server {:local/root "../../bases/server"}}
 

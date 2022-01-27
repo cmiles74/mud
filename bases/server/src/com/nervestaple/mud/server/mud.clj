@@ -1,23 +1,16 @@
 (ns com.nervestaple.mud.server.mud
   "The main MUD server"
   (:require
-   [taoensso.timbre :as timbre
-    :refer (info)]
-   [taoensso.timbre.appenders.core :as appenders]
    [aleph.http :as http]
+   [bidi.ring :refer [make-handler]]
+   [cheshire.core :as json]
+   [com.nervestaple.mud.server.game :as game]
+   [com.nervestaple.mud.log.interface :as log]
    [manifold.stream :as stream]
    [manifold.deferred :as deferred]
    [manifold.bus :as bus]
    [ring.middleware.params :as params]
-   [bidi.ring :refer [make-handler]]
-   [yada.yada :as yada]
-   [cheshire.core :as json]
-   [com.nervestaple.mud.server.game :as game]
-   [com.nervestaple.mud.server.data :as data]))
-
-(defonce timbre-config
-  (timbre/merge-config!
-   {:appenders {:spit (appenders/spit-appender {:fname "mud-server.log"})}}))
+   [yada.yada :as yada]))
 
 ;; maximum messages any client can send per second
 (def client-max-message-rate 5)
@@ -31,19 +24,14 @@
 ;; our event bus for broadcasts
 (def event-bus (bus/event-bus))
 
-(defn register-client
-  "Registers a new client with the server by assigning them a name and adding
-  their name and websocket stream to the anonymous-clients map. Returns a map of
-  client data."
-  [stream]
-  (data/add-anonymous-client stream))
-
 (defn welcome
-  "Writes a welcome message for the provided client-name to the provided websocket stream."
+  "Writes a welcome message for the provided client-name to the provided websocket
+  stream."
   [client]
   (stream/put! (:connection client)
                (json/generate-smile {:type "welcome"
-                                     :content (str "Welcome to the Mud Server, " (client :friendly-name) "!")})))
+                                     :content (str "Welcome to the Mud Server, "
+                                                   (client :friendly-name) "!")})))
 
 (defn handle-server-command
   "Handles a server command from the client."
@@ -69,12 +57,12 @@
   "Handles an incoming client web request by creating a websocket stream for the
   request and welcoming the new client."
   [request]
-  (info request)
+  (log/debug request)
   (->
    (deferred/let-flow [stream (http/websocket-connection request)]
 
      ;; register the new client
-     (let [client (register-client stream)
+     (let [client (game/register-client stream)
            handler-fn (client-handler client)]
 
        ;; welcome the client
@@ -123,16 +111,15 @@
 (defn start-server
   "Starts the server with the provided map of configuration options."
   [configuration]
-  (if (not @server)
+  (when-not @server
     (let [server-port (:mud_port configuration)]
-
-      (dosync (info "Starting the Mud server, listening on port" server-port)
+      (dosync (log/info "Starting the Mud server, listening on port" server-port)
               (ref-set server (http/start-server app {:port server-port}))))))
 
 (defn stop-server
   "Stops the currently running server."
   []
-  (if @server
-    (dosync (info "Stopping the Mud server")
+  (when @server
+    (dosync (log/info "Stopping the Mud server")
             (.close @server)
             (ref-set server nil))))

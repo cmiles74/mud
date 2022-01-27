@@ -3,6 +3,8 @@
                                 "components/cli/resources"
                                 "components/config/src"
                                 "components/config/resources"
+                                "components/game/src"
+                                "components/game/resources"
                                 "components/log/src"
                                 "components/log/resources"
                                 "bases/client/src"
@@ -24,6 +26,7 @@
 
             :test {:extra-paths ["components/cli/test"
                                  "components/config/test"
+                                 "components/game/test"
                                  "components/log/test"
                                  "bases/client/test"
                                  "bases/server/test"]}
