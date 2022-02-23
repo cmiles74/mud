@@ -1,0 +1,5 @@
+{:mud_log_level "debug"
+ :mud_out_log "mud-client.log"
+ :mud_host "localhost"
+ :mud_port 18083}
+ 

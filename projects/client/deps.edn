@@ -1,9 +1,15 @@
 {:paths ["resources"]
  :deps {poly/cli {:local/root "../../components/cli"}
         poly/config {:local/root "../../components/config"}
+        poly/console {:local/root "../../components/console"}
         poly/log {:local/root "../../components/log"}
         poly/terminal {:local/root "../../components/terminal"}
-        poly/client {:local/root "../../bases/client"}}
+        poly/client {:local/root "../../bases/client"}
+
+        aleph/aleph {:mvn/version "0.4.6"}
+        cheshire/cheshire {:mvn/version "5.10.2"}
+        manifold/manifold {:mvn/version "0.2.3"}
+        org.clojure/core.async {:mvn/version "1.5.648"}}
 
  :aliases {:test {:extra-paths []
                   :extra-deps  {}}

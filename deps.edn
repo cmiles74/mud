@@ -3,6 +3,8 @@
                                 "components/cli/resources"
                                 "components/config/src"
                                 "components/config/resources"
+                                "components/console/src"
+                                "components/console/resources"
                                 "components/game/src"
                                 "components/game/resources"
                                 "components/log/src"
@@ -22,6 +24,7 @@
                                com.taoensso/timbre {:mvn/version "5.1.2"}
                                manifold/manifold {:mvn/version "0.2.3"}
                                org.clojure/clojure {:mvn/version "1.10.3"}
+                               org.clojure/core.async {:mvn/version "1.5.648"}
                                org.clojure/tools.cli {:mvn/version "1.0.206"}
                                org.clojure/tools.deps.alpha {:mvn/version "0.12.1120"}
                                ring/ring {:mvn/version "1.6.3"}
@@ -29,6 +32,7 @@
 
             :test {:extra-paths ["components/cli/test"
                                  "components/config/test"
+                                 "components/console/test"
                                  "components/game/test"
                                  "components/log/test"
                                  "components/terminal/test"

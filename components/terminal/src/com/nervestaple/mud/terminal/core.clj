@@ -77,4 +77,3 @@
                         (onResized [terminal new-size]
                           (resize-fn screen [(.getColumns new-size)
                                              (.getRows new-size)])))))
-
