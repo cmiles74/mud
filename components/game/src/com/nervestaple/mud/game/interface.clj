@@ -11,6 +11,11 @@
   [friendly-name handle connection]
   (core/add-client friendly-name handle connection))
 
+(defn get-client-ids
+  "Returns a list of all unique client identifiers."
+  []
+  (core/get-client-ids))
+
 (defn add-anonymous-client
   "Adds a new client and their connection; this function is used to keep track of
   connected clients. The 'connection' should be a Manifold deferred representing

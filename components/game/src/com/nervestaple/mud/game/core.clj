@@ -72,6 +72,10 @@
       (alter clients assoc id client)
       client))))
 
+(defn get-client-ids
+  []
+  (keys @clients))
+
 (defn add-anonymous-client
   [connection]
   (let [id (count @clients)]
