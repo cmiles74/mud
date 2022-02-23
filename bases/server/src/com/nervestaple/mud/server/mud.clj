@@ -112,6 +112,7 @@
   "Starts the server with the provided map of configuration options."
   [configuration]
   (when-not @server
+    (log/set-ns-log-level "io.netty.*" :info)
     (let [server-port (:mud_port configuration)]
       (dosync (log/info "Starting the Mud server, listening on port" server-port)
               (ref-set server (http/start-server app {:port server-port}))))))
