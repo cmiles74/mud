@@ -3,8 +3,8 @@
             [com.nervestaple.mud.cli.interface :as cli]))
 
 (deftest test-cli-start
-  (testing "Valid options and arguments")
-  (is (cli/parse-cli-args "usage" [["-h" "--help" "Help"]]
-                          (fn [& args] (count args) nil)
-                          (fn [& args] args)
-                          [])))
+  (testing "Valid options and arguments"
+    (is (cli/parse-cli-args "usage" [["-h" "--help" "Help"]]
+                            (fn [& args] (count args) nil)
+                            (fn [& args] args)
+                            []))))
