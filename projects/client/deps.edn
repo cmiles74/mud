@@ -2,6 +2,7 @@
  :deps {poly/cli {:local/root "../../components/cli"}
         poly/config {:local/root "../../components/config"}
         poly/log {:local/root "../../components/log"}
+        poly/terminal {:local/root "../../components/terminal"}
         poly/client {:local/root "../../bases/client"}}
 
  :aliases {:test {:extra-paths []

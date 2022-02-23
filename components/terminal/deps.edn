@@ -1,0 +1,4 @@
+{:paths ["src" "resources"]
+ :deps {com.googlecode.lanterna/lanterna {:mvn/version "3.2.0-alpha1"}}
+ :aliases {:test {:extra-paths ["test"]
+                  :extra-deps {}}}}

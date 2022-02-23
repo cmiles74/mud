@@ -7,6 +7,8 @@
                                 "components/game/resources"
                                 "components/log/src"
                                 "components/log/resources"
+                                "components/terminal/src"
+                                "components/terminal/resources"
                                 "bases/client/src"
                                 "bases/client/resources"
                                 "bases/server/src"
@@ -16,6 +18,7 @@
                                bidi/bidi {:mvn/version "2.1.6"}
                                cheshire/cheshire {:mvn/version "5.10.2"}
                                com.fzakaria/slf4j-timbre {:mvn/version "0.3.21"}
+                               com.googlecode.lanterna/lanterna {:mvn/version "3.2.0-alpha1"}
                                com.taoensso/timbre {:mvn/version "5.1.2"}
                                manifold/manifold {:mvn/version "0.2.3"}
                                org.clojure/clojure {:mvn/version "1.10.3"}
@@ -28,6 +31,7 @@
                                  "components/config/test"
                                  "components/game/test"
                                  "components/log/test"
+                                 "components/terminal/test"
                                  "bases/client/test"
                                  "bases/server/test"]}
 
