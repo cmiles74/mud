@@ -25,7 +25,7 @@
   (core/refresh screen))
 
 (defn size
-  "Returns a sequences with the size of the screen, [columns, rows]."
+  "Returns a vector with the current size of the screen: [columns, rows].b"
   [screen]
   (core/size screen))
 
@@ -33,6 +33,11 @@
   "Moves the cursor of the screen to the specified coordinate."
   [screen column row]
   (core/move-cursor screen column row))
+
+(defn cursor-position
+  "Returns a vector with the current cursor position: [column, row]."
+  [screen]
+  (core/cursor-position screen))
 
 (defn write-char
   "Writes a character to the screen at the specified coordinate."

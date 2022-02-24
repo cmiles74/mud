@@ -42,6 +42,11 @@
   [screen column row]
   (.setCursorPosition screen (TerminalPosition. column row)))
 
+(defn cursor-position
+  [screen]
+  (let [cursor-position (.getCursorPosition screen)]
+    [(.getColumn cursor-position) (.getRow cursor-position)]))
+
 (defn write-char
   [screen column row character]
   (.setCharacter screen column row (TextCharacter. character)))
