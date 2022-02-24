@@ -22,6 +22,6 @@ jobs:
       - name: Force clojure to resolve dependencies
         run: clojure -A:dev:test -P
       - name: Test
-        run: clojure -M:poly test :all :dev
+        run: xvfb-run clojure -M:poly test :all :dev
       - name: Check
         run: clojure -M:poly check
